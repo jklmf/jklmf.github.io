@@ -1,64 +1,49 @@
-baseURL = "https://jklmf.github.io/"
-title = "Falcon LIU"
-copyright = "Copyright © 2008–2019, Steve Francia and the Hugo Authors; all rights reserved."
-paginate = 2
-languageCode = "en-us"
-DefaultContentLanguage = "en"
-enableInlineShortcodes = true
-footnoteReturnLinkContents = "^"
-googleAnalytics = "UA-XXXX"
-DisqusShortname = ""
-theme = "hugo-theme-chunky-poster"
-
-[menu]
-  [[menu.main]]
-    identifier = "home"
-    name = "Home"
-    url = "/"
-    weight = 10
-  [[menu.main]]
-    identifier = "about"
-    name = "About"
-    url = "/about/"
-    weight = 0
-
-[taxonomies]
-category = "categories"
-tag = "tags"
-series = "series"
-author = "authors"
+baseURL                     = "https://jklmf.github.io/"
+languageCode                = "en-us"
+defaultContentLanguage      = "en"
+isMultilingual              = false
+title                       = "Falcon from hardware"
+theme                       = "sam"
+pygmentsStyle               = "monokai"                        # https://help.farbox.com/pygments.html
+pygmentsCodefences          = true
+# googleAnalytics           = ""                               # Tracking code, eg. "UA-111111111-1"
 
 [params]
-  author = "Hugo Authors"
-  description = "The only way to get to a place of<br> freedom is through discipline. <br>- \"Discipline Equals Freedom\""
-  homepageImage = "/images/homepage-image.jpg"
-  share = true
-  showLanguageSwitcher = true
+    dateform             = "Mon Jan 02, 2006"
+    dateformfull         = "Mon Jan 2 2006 15:04:05 EST"
+    favicon              = "sam.ico"
+    homepage             = "main"                           # What to call the home page link
+    footerText           = "lmf.falcon@gmail.com"
 
-  # Custom CSS and JS. Relative to /static/css and /static/js respectively.
-  customCSS = []
-  customJS = []
+# Metadata for Open Graph and Twitter
+    description          = "A new Hugo site."               # Max 160 characters show in search results
+    images               = ["tn.png"]                       # Image that shows on Twitter cards and Open Graph links to the site
+    title                = "Call me Sam"
+    # rss                = ""
 
-  [params.social]
-    email = "lmf.falcon@gmail.com"
-    linkedin = "https://www.linkedin.com/in/falcon-lmf-44050665/"
-    github = "https://github.com/falconlmf/"
+[[params.mainMenu]]
+    link = "posts"
+    text = "posts"
 
-  [params.prismJS]
-    enable = true
-    theme = ""
+[[params.mainMenu]]
+    link = "gallery"
+    text = "gallery"
 
-  [params.commento]
-    enable = true
-    url = "https://commento.io"
+[[params.mainMenu]]
+    link = "portfolio"
+    text = "portfolio"
 
-[markup]
-  [markup.highlight]
-    codeFences = false
+[[params.mainMenu]]
+    link = "about"
+    text = "Falcon in hardware"
 
-[services]
-  [services.instagram]
-    disableInlineCSS = true
+[[params.mainMenu]]
+    link = "https://www.linkedin.com/in/falcon-lmf-44050665/"
+    text = "linkedin"
 
-  [services.twitter]
-    disableInlineCSS = true
+[[params.mainMenu]]
+    link = "https://github.com/falconlmf/"
+    text = "</> github"
+
+[imaging]
+    quality = 75
