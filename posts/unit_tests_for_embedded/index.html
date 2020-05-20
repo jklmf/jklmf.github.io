@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+
+<title>
+    Unit Tests for Embedded - Falcon from hardware
+</title>
+
+
+<link rel="shortcut icon" href="/icon.ico">
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.min.117d8e9ea522921f3482b35bbeb6b3e740c0f5827ffc6babaf18d57846792810.css" integrity="sha256-EX2OnqUikh80grNbvraz50DA9YJ//GurrxjVeEZ5KBA=" crossorigin="anonymous" media="screen">
+
+
+
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Unit Tests for Embedded"/>
+<meta name="twitter:description" content="Been a while wondering if embedded program can be unit-tested&hellip;
+I was about to rewrite IR_Manager. It was actually a set of &lsquo;driver&rsquo; that to handle all IR transmit and receive among all the IR protocols or as raw as plain IR profiles.
+The basic logic is: when the device on boot, the firmware picks and initialises the protocols the hardware is needed.
+Transmission: When the clouds emit a transmit IR command to the hardware, it transmits the stream if it passed some restrictions, basically simple as that."/>
+
+<meta property="og:title" content="Unit Tests for Embedded" />
+<meta property="og:description" content="Been a while wondering if embedded program can be unit-tested&hellip;
+I was about to rewrite IR_Manager. It was actually a set of &lsquo;driver&rsquo; that to handle all IR transmit and receive among all the IR protocols or as raw as plain IR profiles.
+The basic logic is: when the device on boot, the firmware picks and initialises the protocols the hardware is needed.
+Transmission: When the clouds emit a transmit IR command to the hardware, it transmits the stream if it passed some restrictions, basically simple as that." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jklmf.github.io/posts/unit_tests_for_embedded/" />
+<meta property="article:published_time" content="2020-04-08T18:05:30+08:00" />
+<meta property="article:modified_time" content="2020-04-08T18:05:30+08:00" />
+
+
+    
+
+    
+    
+    
+    <title>
+        
+        Unit Tests for Embedded
+        
+    </title>
+</head>
+
+<body>
+    
+    
+    <header class="wrap flex-container">
+        <h1>Unit Tests for Embedded</h1>
+    </header>
+    
+    <main class="wrap">
+        
+<div class="flex-container">
+    <aside role="complementary">
+        Wed Apr 08, 2020 &#183; 455 words
+        <div class="tag-container">
+            
+        </div>
+    </aside>
+    <hr />
+    <article role="article">
+        <p>Been a while wondering if embedded program can be unit-tested&hellip;</p>
+<p>I was about to rewrite IR_Manager. It was actually a set of &lsquo;driver&rsquo; that to handle all IR transmit and receive among all the IR protocols or as raw as plain IR profiles.</p>
+<p>The basic logic is: when the device on boot, the firmware picks and initialises the protocols the hardware is needed.</p>
+<h1 id="transmission">Transmission:</h1>
+<p>When the clouds emit a transmit IR command to the hardware, it transmits the stream if it passed some restrictions, basically simple as that.</p>
+<h1 id="receiving">Receiving:</h1>
+<ol>
+<li>When IR stream is captured, IR_Manager will decode it if it matches any of initialised drivers.</li>
+<li>Once the stream successfully went through some filters and some conditions, it will be feeded into a encoder to generate a IR commpressed notation and send to the cloud.</li>
+</ol>
+<p>When I was studying this, a quiestion came to mind: How should a embedded engineer test all the edge cases among all these drivers set?</p>
+<h1 id="the-plan">The Plan</h1>
+<p>To abstract the peripherals drivers from embedded software, the key is to mock.<br>
+I found Ceedling. We can use it to mock the interfaces to our hardware so we don&rsquo;t need to &lsquo;flash, run, and debug&rsquo; on the target hardware.</p>
+<p>This allows us to run our unit-tests rapidly without conducting the hardware might be even available.</p>
+<p>In this scenario, expected peripherals need to be mocked would be: one timer for IR transmit and one timer for IR receive. However, Ceedling provide a improved experience for automatically generating the CMocks we need.</p>
+<h1 id="the-result">The result</h1>
+<p>So, basically I finished IR rewriting by kind of this pattern, let sat for IR decoding:</p>
+<ol>
+<li>find out all the possible success/failure path in decoding an IR stream</li>
+<li>group and write test cases by their purpose</li>
+<li>rewrite it, debug it by only Ceedling rather than flashing the program to the hardwear</li>
+</ol>
+<h1 id="the-funniest-part-interrupts">The funniest part, Interrupts</h1>
+<p>The IR transmiting carrier ticker and the IR receiving, they relies on their corresponding timer interrupt.</p>
+<p>So when the development is totally off-the-hardware, how would the hardware interrupt vectors work, right?</p>
+<p>Ceedling provides some form of mock functions to allow you manually control the &lsquo;expected&rsquo;, &lsquo;unexpected&rsquo;, &lsquo;ignore&rsquo; and &lsquo;return&rsquo; of functions.<br>
+Example of IR receive a pair of mark/space data on stm32f1x mcu would be completed by below sequence:</p>
+<ol>
+<li>setup the read-out of input capture 1 of timerX equal to the mark value</li>
+<li>setup the read-out of input capture 2 of timerX equal to the mark+space</li>
+<li>call the interrupt function manually</li>
+</ol>
+<h1 id="thoughts">Thoughts</h1>
+<p>Unit-test is a good way of embedded development. Ceedling is also a good tool even for embedded developer, it helps us to reduce the waste of development time. By abstracting the peripheral layer, developer can purely focus on the program itself for the moment.</p>
+<p><img src="/posts/images/unit_test1.png" alt=""></p>
+
+    </article>
+</div>
+
+
+        
+<nav role="navigation" class="flex-container bottom-menu">
+    
+<hr />
+<p>
+
+
+    
+        <a href="/posts">back</a>
+        
+            &#183;
+        
+    
+
+    
+        
+            <a href="/posts">posts</a>
+        
+    
+    
+        
+            &#183; 
+            <a href="/gallery">gallery</a>
+        
+            &#183; 
+            <a href="/about">Falcon in hardware</a>
+        
+            &#183; 
+            <a href="https://www.linkedin.com/in/falcon-lmf-44050665/">linkedin</a>
+        
+            &#183; 
+            <a href="https://github.com/falconlmf/">&lt;/&gt; github</a>
+        
+    
+    &#183; 
+    <a href="/">
+        main
+    </a>
+
+</p>
+</nav>
+
+    </main>
+    
+    <footer class="flex-container footer"><a href="mailto:lmf.falcon@gmail.com">lmf.falcon@gmail.com</a></footer>
+    
+    
+</body>
+
+</html>
