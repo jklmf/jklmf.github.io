@@ -22,7 +22,7 @@ When the clouds emit a transmit IR command to the hardware, it transmits the str
 # The Plan  
 When I was studying this, a quiestion came to mind: How should a embedded engineer test all the edge cases among all these protocols and checks?  
 
-By abstracting the peripherals drivers from embedded software would be a way, but how? I found Ceedling. We can use it to mock the interfaces so we don't need to repeat the classic loop: flash, run, and debug on the target hardware.
+By abstracting the peripherals drivers from embedded software would be a way, but how? I found Ceedling, it uses GCC instead of the target compiler. We can use it to mock the interfaces so we don't need to repeat the classic loop: flash, run, and debug on the target hardware.
 
 This allows us to run our unit-tests rapidly without conducting the hardware might be even available.  
 
@@ -88,10 +88,9 @@ IR.c
 28              ...
 ```
 
-This is a basic idea how I conduct unit-tests on such hardware feature. We are able to simulate and test the behaviour of input capture and timer triggers but with no hardware involved.
-// https://sourcethemes.com/academic/docs/customization/#customize-style-css
-
 # Thoughts  
 Unit-test is a good way of embedded development. Ceedling is also a good tool even for embedded developer, it helps us to reduce the waste of development time. By abstracting the peripheral layer, developer can purely focus on the program itself for the moment.  
+
+# TBC...
 
 ![](/posts/images/unit_test1.png)
