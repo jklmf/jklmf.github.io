@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Falcon from hardware</title>
+    <link>https://jklmf.github.io/posts/</link>
+    <description>Recent content in Posts on Falcon from hardware</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 17 May 2020 22:28:22 +0800</lastBuildDate>
+    
+	<atom:link href="https://jklmf.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Clock Switching</title>
+      <link>https://jklmf.github.io/posts/clock_switching/</link>
+      <pubDate>Sun, 17 May 2020 22:28:22 +0800</pubDate>
+      
+      <guid>https://jklmf.github.io/posts/clock_switching/</guid>
+      <description>TBC&amp;hellip; </description>
+    </item>
+    
+    <item>
+      <title>Unit Tests for Embedded</title>
+      <link>https://jklmf.github.io/posts/unit_tests_for_embedded/</link>
+      <pubDate>Wed, 08 Apr 2020 18:05:30 +0800</pubDate>
+      
+      <guid>https://jklmf.github.io/posts/unit_tests_for_embedded/</guid>
+      <description>Been a while wondering if embedded program can be unit-tested&amp;hellip;
+One day, I was about to rewrite IR_Manager, which was actually a driver that managed IR data transmission and reception. It supported various main stream IR protocols and few carrier frequencies. It can dynamically re-mount the desire IR protocol on runtime such as IR remote re-pair or differenct level of device reset.
+It then re-initialise the required MCU peripherals such as Clock, GPIOs, Timers and interrupts.</description>
+    </item>
+    
+    <item>
+      <title>Test Jig</title>
+      <link>https://jklmf.github.io/posts/test_jig/</link>
+      <pubDate>Sun, 17 Nov 2019 22:28:11 +0800</pubDate>
+      
+      <guid>https://jklmf.github.io/posts/test_jig/</guid>
+      <description>In my long time ago freelance, the maximum number of PCBA in my production line (my room &amp;amp; myself), was twenty something. I can recall the struggles of troubleshooting&amp;hellip;
+Lately, I am assigned to re-make the test-jig program for one of our product, because the original source code is disappeared&amp;hellip; The only working test-jig is being use in the production line.
+I managed to clone the raspberry pi and rebuild one test-jig in the office.</description>
+    </item>
+    
+    <item>
+      <title>50Hz or 60Hz?</title>
+      <link>https://jklmf.github.io/posts/50_60_hz/</link>
+      <pubDate>Sat, 17 May 2014 22:28:11 +0800</pubDate>
+      
+      <guid>https://jklmf.github.io/posts/50_60_hz/</guid>
+      <description>In my second job as a &amp;lsquo;software engineer&amp;rsquo;, my job was, mainly maintain and update existing firmwares.
+I came across with a coffee machine that needs to be selling globally, rather than only some counties. My task was to update the part of the circuit and firmware that detects the AC main switching frequency.
+Hardware A non-zero-crossing Triac and an optocoupler were chosen as the detection circuit. The MCU input pin is protected from high voltage by the optocoupler.</description>
+    </item>
+    
+  </channel>
+</rss>
