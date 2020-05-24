@@ -35,15 +35,13 @@
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Unit Tests for Embedded"/>
 <meta name="twitter:description" content="Been a while wondering if embedded program can be unit-tested&hellip;
-I was about to rewrite IR_Manager. It was actually a set of &lsquo;driver&rsquo; that to handle all IR transmit and receive among all the IR protocols or as raw as plain IR profiles.
-The basic logic is: when the device on boot, the firmware picks and initialises the protocols the hardware is needed.
-Transmission: When the clouds emit a transmit IR command to the hardware, it transmits the stream if it passed some restrictions, basically simple as that."/>
+One day, I was about to rewrite IR_Manager, which was actually a driver that managed IR data transmission and reception. It supported various main stream IR protocols and few carrier frequencies. It can dynamically re-mount the desire IR protocol on runtime such as IR remote re-pair or differenct level of device reset.
+It then re-initialise the required MCU peripherals such as Clock, GPIOs, Timers and interrupts."/>
 
 <meta property="og:title" content="Unit Tests for Embedded" />
 <meta property="og:description" content="Been a while wondering if embedded program can be unit-tested&hellip;
-I was about to rewrite IR_Manager. It was actually a set of &lsquo;driver&rsquo; that to handle all IR transmit and receive among all the IR protocols or as raw as plain IR profiles.
-The basic logic is: when the device on boot, the firmware picks and initialises the protocols the hardware is needed.
-Transmission: When the clouds emit a transmit IR command to the hardware, it transmits the stream if it passed some restrictions, basically simple as that." />
+One day, I was about to rewrite IR_Manager, which was actually a driver that managed IR data transmission and reception. It supported various main stream IR protocols and few carrier frequencies. It can dynamically re-mount the desire IR protocol on runtime such as IR remote re-pair or differenct level of device reset.
+It then re-initialise the required MCU peripherals such as Clock, GPIOs, Timers and interrupts." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jklmf.github.io/posts/unit_tests_for_embedded/" />
 <meta property="article:published_time" content="2020-04-08T18:05:30+08:00" />
@@ -73,7 +71,7 @@ Transmission: When the clouds emit a transmit IR command to the hardware, it tra
         
 <div class="flex-container">
     <aside role="complementary">
-        Wed Apr 08, 2020 &#183; 455 words
+        Wed Apr 08, 2020 &#183; 647 words
         <div class="tag-container">
             
         </div>
@@ -81,19 +79,19 @@ Transmission: When the clouds emit a transmit IR command to the hardware, it tra
     <hr />
     <article role="article">
         <p>Been a while wondering if embedded program can be unit-tested&hellip;</p>
-<p>I was about to rewrite IR_Manager. It was actually a set of &lsquo;driver&rsquo; that to handle all IR transmit and receive among all the IR protocols or as raw as plain IR profiles.</p>
-<p>The basic logic is: when the device on boot, the firmware picks and initialises the protocols the hardware is needed.</p>
+<p>One day, I was about to rewrite IR_Manager, which was actually a driver that managed IR data transmission and reception. It supported various main stream IR protocols and few carrier frequencies. It can dynamically re-mount the desire IR protocol on runtime such as IR remote re-pair or differenct level of device reset.</p>
+<p>It then re-initialise the required MCU peripherals such as Clock, GPIOs, Timers and interrupts.</p>
+<p>Since it didn`t have a state control (states definitions found but not implemented), different type of IR process were putted in a single huge loop, making it not easy to read and maintain or test.</p>
 <h1 id="transmission">Transmission:</h1>
-<p>When the clouds emit a transmit IR command to the hardware, it transmits the stream if it passed some restrictions, basically simple as that.</p>
+<p>When the clouds emit a transmit IR command to the hardware, it transmits the stream if it passed all the checks.</p>
 <h1 id="receiving">Receiving:</h1>
 <ol>
 <li>When IR stream is captured, IR_Manager will decode it if it matches any of initialised drivers.</li>
-<li>Once the stream successfully went through some filters and some conditions, it will be feeded into a encoder to generate a IR commpressed notation and send to the cloud.</li>
+<li>Once the stream successfully went through some filters and some conditions, it will be feeded into an encoder to generate commpressed notation of the stream, and send to the cloud.</li>
 </ol>
-<p>When I was studying this, a quiestion came to mind: How should a embedded engineer test all the edge cases among all these drivers set?</p>
 <h1 id="the-plan">The Plan</h1>
-<p>To abstract the peripherals drivers from embedded software, the key is to mock.<br>
-I found Ceedling. We can use it to mock the interfaces to our hardware so we don&rsquo;t need to &lsquo;flash, run, and debug&rsquo; on the target hardware.</p>
+<p>When I was studying this, a quiestion came to mind: How should a embedded engineer test all the edge cases among all these protocols and checks?</p>
+<p>By abstracting the peripherals drivers from embedded software would be a way, but how? I found Ceedling, it uses GCC instead of the target compiler. We can use it to mock the interfaces so we don&rsquo;t need to repeat the classic loop: flash, run, and debug on the target hardware.</p>
 <p>This allows us to run our unit-tests rapidly without conducting the hardware might be even available.</p>
 <p>In this scenario, expected peripherals need to be mocked would be: one timer for IR transmit and one timer for IR receive. However, Ceedling provide a improved experience for automatically generating the CMocks we need.</p>
 <h1 id="the-result">The result</h1>
@@ -103,18 +101,56 @@ I found Ceedling. We can use it to mock the interfaces to our hardware so we don
 <li>group and write test cases by their purpose</li>
 <li>rewrite it, debug it by only Ceedling rather than flashing the program to the hardwear</li>
 </ol>
-<h1 id="the-funniest-part-interrupts">The funniest part, Interrupts</h1>
+<h1 id="the-tricky-part-you-cant-mock">The tricky part you can&rsquo;t mock</h1>
 <p>The IR transmiting carrier ticker and the IR receiving, they relies on their corresponding timer interrupt.</p>
-<p>So when the development is totally off-the-hardware, how would the hardware interrupt vectors work, right?</p>
-<p>Ceedling provides some form of mock functions to allow you manually control the &lsquo;expected&rsquo;, &lsquo;unexpected&rsquo;, &lsquo;ignore&rsquo; and &lsquo;return&rsquo; of functions.<br>
+<p>So when the development is totally off-the-hardware, how would the hardware interrupt vectors work?</p>
+<p>Ceedling provides some form of mock functions to allow you manually control the &lsquo;expected&rsquo;, &lsquo;unexpected&rsquo;, &lsquo;ignore&rsquo; and &lsquo;return&rsquo; of functions.
 Example of IR receive a pair of mark/space data on stm32f1x mcu would be completed by below sequence:</p>
 <ol>
-<li>setup the read-out of input capture 1 of timerX equal to the mark value</li>
-<li>setup the read-out of input capture 2 of timerX equal to the mark+space</li>
+<li>setup the read-out of input capture 1 = mark value</li>
+<li>setup the read-out of input capture 2 = (mark+space) value</li>
 <li>call the interrupt function manually</li>
 </ol>
-<h1 id="thoughts">Thoughts</h1>
+<p>test_IR.c</p>
+<pre><code>1       // cond1 &amp; cond2 are the arbitrary generated start conditions
+2       TIM_GetITStatus_ExpectAndReturn(IR_RX_TIM, TIM_IT_CC1, RESET);
+3       TIM_GetITStatus_ExpectAndReturn(IR_RX_TIM, TIM_IT_CC2, !RESET);
+4       TIM_ClearITPendingBit_Expect(IR_RX_TIM, TIM_IT_CC2);
+5       TIM_GetCapture1_ExpectAndReturn(IR_RX_TIM, cond1);
+6       TIM_GetCapture2_ExpectAndReturn(IR_RX_TIM, cond1 + cond2);
+7       IR_RX_TIM_IRQHandler();
+</code></pre><p>IR.c</p>
+<pre><code>1       void IR_RX_TIM_IRQHandler(void)
+2       {
+3               /* Get the Input Capture value */
+4               if (TIM_GetITStatus(IR_RX_TIM, TIM_IT_CC1)) {
+5                       TIM_ClearITPendingBit(IR_RX_TIM, TIM_IT_CC1);
+6                       capture_duty = TIM_GetCapture2(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;
+7                       capture_period = TIM_GetCapture1(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;
+8                       
+9               }
+10              if (TIM_GetITStatus(IR_RX_TIM, TIM_IT_CC2)) {
+11                      TIM_ClearITPendingBit(IR_RX_TIM, TIM_IT_CC2);
+12                      capture_duty = TIM_GetCapture1(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;
+13                      capture_period = TIM_GetCapture2(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;
+14              }
+15      
+16              switch (ir_state) {
+17              case IR_STATE_RX:
+18                      carrier_ticker = carrier_rx_timeout_tick;
+19                      break;
+20              case IR_STATE_IDLE:
+21                      if (capture_start &gt; 0) {
+22                              break;
+23                      }
+24                      ... // some start condition checks
+25                      capture_start = 1;
+26                      capture_stream_ptr = 0;
+27                      ir_state = IR_STATE_RX;
+28              ...
+</code></pre><h1 id="thoughts">Thoughts</h1>
 <p>Unit-test is a good way of embedded development. Ceedling is also a good tool even for embedded developer, it helps us to reduce the waste of development time. By abstracting the peripheral layer, developer can purely focus on the program itself for the moment.</p>
+<h1 id="tbc">TBC&hellip;</h1>
 <p><img src="/posts/images/unit_test1.png" alt=""></p>
 
     </article>
