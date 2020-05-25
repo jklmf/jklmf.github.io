@@ -1,5 +1,5 @@
 * {
-  margin: 5px;
+  margin: 0;
   padding: 0;
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
@@ -20,6 +20,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  margin: 20px;
   opacity: 1; }
 
 header {
@@ -28,7 +29,7 @@ header {
     header {
       padding: 3em 1em; } }
 h1, h2, h3 {
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.5em;
   font-family: 'Didact Gothic', sans-serif;
   opacity: 0.6; }
 
@@ -116,9 +117,10 @@ nav {
   bottom: 0;
   padding: 1rem;
   font-family: "Didact Gothic", "sans serif";
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1em;
-  opacity: 0.8; }
+  opacity: 0.8;
+  font-size: 0.9rem; }
   .footer a {
     border-bottom: none;
     display: contents; }
@@ -128,7 +130,7 @@ nav {
 
 .big-link {
   font-family: "Didact Gothic", "sans serif";
-  font-size: 2.2rem;
+  font-size: 3rem;
   font-weight: 300;
   margin-bottom: 2rem;
   line-height: 1.5em; }
@@ -176,9 +178,9 @@ article {
     border: 1px solid #cccccc; }
   article img {
     width: 100%;
-    max-width: 95%;
+    max-width: 100%;
     display: block;
-    margin: 2rem auto;
+    margin: 0rem auto;
     opacity: 1; }
   article blockquote {
     background-color: #cccccc;
