@@ -1,5 +1,5 @@
 * {
-  margin: 0;
+  margin: 5px;
   padding: 0;
   -webkit-box-sizing: border-box;
   box-sizing: border-box; }
@@ -28,7 +28,7 @@ header {
     header {
       padding: 3em 1em; } }
 h1, h2, h3 {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.2rem;
   font-family: 'Didact Gothic', sans-serif;
   opacity: 0.6; }
 
@@ -102,7 +102,8 @@ nav {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center; }
+  text-align: center;
+  font-size: 0.9rem; }
 
 .footer {
   width: 100%;
@@ -115,7 +116,7 @@ nav {
   bottom: 0;
   padding: 1rem;
   font-family: "Didact Gothic", "sans serif";
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1em;
   opacity: 0.8; }
   .footer a {
@@ -127,7 +128,7 @@ nav {
 
 .big-link {
   font-family: "Didact Gothic", "sans serif";
-  font-size: 3rem;
+  font-size: 2.2rem;
   font-weight: 300;
   margin-bottom: 2rem;
   line-height: 1.5em; }
@@ -175,7 +176,7 @@ article {
     border: 1px solid #cccccc; }
   article img {
     width: 100%;
-    max-width: 100%;
+    max-width: 95%;
     display: block;
     margin: 2rem auto;
     opacity: 1; }
