@@ -14,7 +14,7 @@
 <meta property="og:image" content="https://jklmf.github.io/2020/04/08/unit_tests_and_abstraction/logic.png">
 <meta property="og:image" content="https://jklmf.github.io/2020/04/08/unit_tests_and_abstraction/unit_test.png">
 <meta property="article:published_time" content="2020-04-08T02:05:30.000Z">
-<meta property="article:modified_time" content="2020-05-29T08:39:10.064Z">
+<meta property="article:modified_time" content="2020-05-29T10:06:43.615Z">
 <meta property="article:author" content="Falcon LIU">
 <meta property="article:tag" content="embedded">
 <meta property="article:tag" content=" hardware">
@@ -67,7 +67,7 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/about/">About</a></li>
+          <li><a href="/about/">About Me</a></li>
          
           <li><a href="/gallery">Gallery</a></li>
         
@@ -108,7 +108,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Transmission"><span class="toc-number">1.</span> <span class="toc-text">Transmission</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Receiving"><span class="toc-number">2.</span> <span class="toc-text">Receiving</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Plan"><span class="toc-number">3.</span> <span class="toc-text">The Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-result"><span class="toc-number">4.</span> <span class="toc-text">The result</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-tricky-part-you-can’t-mock"><span class="toc-number">5.</span> <span class="toc-text">The tricky part you can’t mock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thoughts"><span class="toc-number">6.</span> <span class="toc-text">Thoughts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstraction"><span class="toc-number">7.</span> <span class="toc-text">Abstraction</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#IR-Manager"><span class="toc-number">1.</span> <span class="toc-text">IR_Manager</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Transmission"><span class="toc-number">1.1.</span> <span class="toc-text">Transmission</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Receiving"><span class="toc-number">1.2.</span> <span class="toc-text">Receiving</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Plan"><span class="toc-number">2.</span> <span class="toc-text">The Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Result"><span class="toc-number">3.</span> <span class="toc-text">The Result</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-tricky-part-you-can’t-mock"><span class="toc-number">3.1.</span> <span class="toc-text">The tricky part you can’t mock</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thoughts"><span class="toc-number">4.</span> <span class="toc-text">Thoughts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstraction"><span class="toc-number">5.</span> <span class="toc-text">Abstraction</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -132,7 +132,7 @@
       
     <div class="postdate">
       
-        <time datetime="2020-04-08T02:05:30.000Z" itemprop="datePublished">2020-04-08</time>
+        <time datetime="2020-04-08T02:05:30.000Z" itemprop="datePublished">Apr 2020</time>
         
       
     </div>
@@ -148,27 +148,29 @@
 
   <div class="content" itemprop="articleBody">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/lightgallery.js/1.0.1/css/lightgallery.min.css" /><div class=".article-gallery"<p>Been a while wondering if embedded program can be unit-tested…  </p>
-<p>One day, I was about to rewrite IR_Manager, which was actually a driver that managed IR data transmission and reception. It supported various main stream IR protocols and few carrier frequencies. It can dynamically re-mount the desire IR protocol on runtime such as IR remote re-pair or differenct level of device reset. </p>
+<h2 id="IR-Manager"><a href="#IR-Manager" class="headerlink" title="IR_Manager"></a>IR_Manager</h2><p>One day, I was about to rewrite IR_Manager, which was actually a driver that managed IR data transmission and reception. It supported few common IR protocols on different carrier frequencies. It can unmount and mount the desire IR protocol on runtime in the case such repairing IR remote or device reset. </p>
 <p>It then re-initialise the required MCU peripherals such as Clock, GPIOs, Timers and interrupts. </p>
-<p>Since it didn`t have a state control (states definitions found but not implemented), different type of IR process were putted in a single huge loop, making it not easy to read and maintain or test. </p>
+<p>Since it didn`t have a state control (states definitions found but not implemented), different types of IR process were putted in a single huge loop, making it not easy to read, maintain or test. </p>
 <p><a href="logic.png" class="gallery-item"><img src="logic.png" alt=""></a></p>
-<h2 id="Transmission"><a href="#Transmission" class="headerlink" title="Transmission"></a>Transmission</h2><p>When the clouds emit a transmit IR command to the hardware, it transmits the stream is valid.</p>
-<h2 id="Receiving"><a href="#Receiving" class="headerlink" title="Receiving"></a>Receiving</h2><ol>
-<li>When IR stream is captured, IR_Manager will decode it if it matches any protocols of initialised drivers.  </li>
-<li>Once the stream successfully went through filters and checks, it will be feeded into an encoder to generate commpressed notation of the stream, and send to the cloud.</li>
+<h3 id="Transmission"><a href="#Transmission" class="headerlink" title="Transmission"></a>Transmission</h3><p>When the clouds emit a transmit IR message to the hardware, it transmits if the stream is valid.</p>
+<h3 id="Receiving"><a href="#Receiving" class="headerlink" title="Receiving"></a>Receiving</h3><ol>
+<li>When IR stream is captured, <code>IR_Manager</code> will check find the match protocol from initialised drivers.  </li>
+<li>Once the stream successfully is captured, filtering and normalisation will be applied before feeding into encoder to generate the commpressed notation, and send to the cloud.</li>
 </ol>
 <h2 id="The-Plan"><a href="#The-Plan" class="headerlink" title="The Plan"></a>The Plan</h2><p><a href="unit_test.png" title="alt" class="gallery-item"><img src="unit_test.png" alt="alt"></a></p>
-<p>When I was studying this, a quiestion came to mind: How should a embedded engineer test all the edge cases among all these protocols and checks?  </p>
-<p>By abstracting the peripherals drivers from embedded software would be a way, but how? I found Ceedling, it uses GCC instead of the target compiler. We can use it to mock the interfaces so we don’t need to repeat the classic loop: flash, run, and debug on the target hardware.</p>
-<p>This allows us to run our unit-tests rapidly without conducting the hardware might be even available.  </p>
+<p>When I was studying this, a quiestion came to mind: How should an embedded engineer test all the edge cases among all these protocols?</p>
+<blockquote>
+<p>Ceedling is a nice build/test system for C applications that makes it easier to create unit tests, especially those needing mocked interfaces. It does this by automatically generating mocks for the source modules you tell it to. This lets you test the interactions between your modules (and is especially useful when testing interactions with hardware).  </p>
+</blockquote>
+<p>I found Ceedling, it uses GCC instead of the target compiler. We can use it to mock the interfaces so we don’t need to repeat the process of flash, run, and debug.</p>
 <p>In this scenario, expected peripherals need to be mocked would be: one timer for IR transmit and one timer for IR receive. However, Ceedling provide a improved experience for automatically generating the CMocks we need.</p>
-<h2 id="The-result"><a href="#The-result" class="headerlink" title="The result"></a>The result</h2><p>So, basically I finished IR rewriting by this pattern, let say for IR decoding:  </p>
+<h2 id="The-Result"><a href="#The-Result" class="headerlink" title="The Result"></a>The Result</h2><p>So, basically I finished IR rewriting by this pattern, let say for IR decoding:  </p>
 <ol>
 <li>find out all the possible success/failure paths in decoding an IR stream  </li>
 <li>group and write test cases by their purpose  </li>
 <li>rewrite it, debug it by only Ceedling rather than flashing the program to the hardwear  </li>
 </ol>
-<h2 id="The-tricky-part-you-can’t-mock"><a href="#The-tricky-part-you-can’t-mock" class="headerlink" title="The tricky part you can’t mock"></a>The tricky part you can’t mock</h2><p>The IR transmiting carrier ticker and the IR receiving, they relies on their corresponding timer interrupt.  </p>
+<h3 id="The-tricky-part-you-can’t-mock"><a href="#The-tricky-part-you-can’t-mock" class="headerlink" title="The tricky part you can’t mock"></a>The tricky part you can’t mock</h3><p>The IR transmiting carrier ticker and the IR receiving, they relies on their corresponding timer interrupt.  </p>
 <p>So when the development is totally off-the-hardware, how would the hardware interrupt vectors work?</p>
 <p>Ceedling provides some form of mock functions to allow you manually control the ‘expected’, ‘unexpected’, ‘ignore’ and ‘return’ of functions.<br>Example of IR receive a pair of mark/space data on stm32f1x mcu would be completed by below sequence:  </p>
 <ol>
@@ -211,7 +213,7 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/about/">About</a></li>
+          <li><a href="/about/">About Me</a></li>
          
           <li><a href="/gallery">Gallery</a></li>
         
@@ -219,7 +221,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Transmission"><span class="toc-number">1.</span> <span class="toc-text">Transmission</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Receiving"><span class="toc-number">2.</span> <span class="toc-text">Receiving</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Plan"><span class="toc-number">3.</span> <span class="toc-text">The Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-result"><span class="toc-number">4.</span> <span class="toc-text">The result</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-tricky-part-you-can’t-mock"><span class="toc-number">5.</span> <span class="toc-text">The tricky part you can’t mock</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thoughts"><span class="toc-number">6.</span> <span class="toc-text">Thoughts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstraction"><span class="toc-number">7.</span> <span class="toc-text">Abstraction</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#IR-Manager"><span class="toc-number">1.</span> <span class="toc-text">IR_Manager</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Transmission"><span class="toc-number">1.1.</span> <span class="toc-text">Transmission</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Receiving"><span class="toc-number">1.2.</span> <span class="toc-text">Receiving</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Plan"><span class="toc-number">2.</span> <span class="toc-text">The Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Result"><span class="toc-number">3.</span> <span class="toc-text">The Result</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-tricky-part-you-can’t-mock"><span class="toc-number">3.1.</span> <span class="toc-text">The tricky part you can’t mock</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thoughts"><span class="toc-number">4.</span> <span class="toc-text">Thoughts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstraction"><span class="toc-number">5.</span> <span class="toc-text">Abstraction</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
@@ -264,7 +266,7 @@
          
           <li><a href="/">Home</a></li>
          
-          <li><a href="/about/">About</a></li>
+          <li><a href="/about/">About Me</a></li>
          
           <li><a href="/gallery">Gallery</a></li>
         
