@@ -96,7 +96,23 @@ ignore:
 # theme: landscape
 theme: cactus
 
+lightgallery:
+    # if you don't specify the css or js source, the default cdn will be used.
+    # css: # css source url
+    # js: #js source url
+    # sorry that I can not find any cdn hosting following plugins,
+    # please self-host the plugin js and add url here
+    plugins:
+        lg-thumbnail: /lg-thumbnail.js
+        lg-zoom: /lg-zoom.js
+        lg-autoplay: /lg-autoplay.js
+        lg-fullscreen: /lg-fullscreen.js
+        lg-pager: /lg-pager.js
+  
+
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: ''
+  type: git
+  repo: git@github.com:jklmf/jklmf.github.io.git
+  branch: hexo
