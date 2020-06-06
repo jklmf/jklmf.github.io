@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/logic.png">
 <meta property="og:image" content="https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/unit_test.png">
 <meta property="article:published_time" content="2020-04-08T02:05:30.000Z">
-<meta property="article:modified_time" content="2020-06-06T14:26:10.224Z">
+<meta property="article:modified_time" content="2020-06-06T14:30:22.922Z">
 <meta property="article:author" content="Falcon LIU">
 <meta property="article:tag" content="embedded">
 <meta property="article:tag" content=" hardware">
@@ -187,7 +187,7 @@
 <p>Normally we would start from the bottom:<br>initialise serial interface peripherals -&gt; follow the datasheet -&gt; make reasonable prototypes for the future</p>
 <p>After we have the driver, we would continue building menu and animations. Sounds straight forward right?</p>
 <p>Picture it, at the end of the menu system, at the very top of menu.c we would have something like:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;global.h&quot;</span><br><span class="line">#include &quot;interrupts.h&quot;</span><br><span class="line">#include &quot;GPIO.h&quot;</span><br><span class="line">#include &quot;menuGraphics.h&quot;       &#x2F;&#x2F; animations</span><br><span class="line">#include &quot;ILI9341_driver.h&quot;     &#x2F;&#x2F; SPI driver</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"global.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"interrupts.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"GPIO.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"menuGraphics.h"</span>       <span class="comment">// animations</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"ILI9341_driver.h"</span>     <span class="comment">// SPI driver</span></span></span><br></pre></td></tr></table></figure>
 <p>To make the application level abstracted, at some point, we might need to think: which calls which?<br>In this case, the menu should own the driver object, menu can initiliase the driver by passing the object in for example. Whenever the menu needs driver to execute or calculate, it calls the prototype, the prototype checks the if object exists.</p>
 <p>The driver is as simple as a container of the SPI chip’s <strong>logics</strong> that only use the flash memory. When the memory usages are bounded and keep as much as application level, developer can control memory usage easiler.</p>
 
