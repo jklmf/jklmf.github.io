@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Been a while wondering if embedded program can be unit-tested… IR_ManagerOne day, I was about to rewrite IR_Manager: a driver that managed IR data transmission and reception. It supported few common I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unit Tests &amp; Abstraction">
+<meta property="og:url" content="https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/index.html">
+<meta property="og:site_name" content="Falcon LIU">
+<meta property="og:description" content="Been a while wondering if embedded program can be unit-tested… IR_ManagerOne day, I was about to rewrite IR_Manager: a driver that managed IR data transmission and reception. It supported few common I">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jklmf.github.io/logic.png">
+<meta property="og:image" content="https://jklmf.github.io/unit_test.png">
+<meta property="article:published_time" content="2020-04-08T08:05:30.000Z">
+<meta property="article:modified_time" content="2022-03-10T14:58:20.230Z">
+<meta property="article:author" content="Falcon LIU">
+<meta property="article:tag" content="embedded, hardware">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://jklmf.github.io/logic.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Unit Tests &amp; Abstraction</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.0.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/projects_url">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" aria-label="Previous post" href="/2022/03/10/test/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2019/11/17/test-jig/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&text=Unit Tests &amp; Abstraction"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&is_video=false&description=Unit Tests &amp; Abstraction"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Unit Tests &amp; Abstraction&body=Check out this article: https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&name=Unit Tests &amp; Abstraction&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&t=Unit Tests &amp; Abstraction"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#IR-Manager"><span class="toc-number">1.</span> <span class="toc-text">IR_Manager</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Transmission"><span class="toc-number">1.1.</span> <span class="toc-text">Transmission</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Receiving"><span class="toc-number">1.2.</span> <span class="toc-text">Receiving</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Plan"><span class="toc-number">2.</span> <span class="toc-text">The Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Result"><span class="toc-number">3.</span> <span class="toc-text">The Result</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-tricky-part-you-can%E2%80%99t-mock"><span class="toc-number">3.1.</span> <span class="toc-text">The tricky part you can’t mock</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thoughts"><span class="toc-number">4.</span> <span class="toc-text">Thoughts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstraction"><span class="toc-number">5.</span> <span class="toc-text">Abstraction</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        Unit Tests &amp; Abstraction
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">Falcon LIU</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-04-08T08:05:30.000Z" itemprop="datePublished">/Apr 2020</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p>Been a while wondering if embedded program can be unit-tested…</p>
+<h2 id="IR-Manager"><a href="#IR-Manager" class="headerlink" title="IR_Manager"></a>IR_Manager</h2><p>One day, I was about to rewrite IR_Manager: a driver that managed IR data transmission and reception. It supported few common IR protocols on different carrier frequencies. It can unmount and mount the desire IR protocol on runtime depend on the need.</p>
+<p>It then re-initialises the required MCU peripherals such as Clock, GPIOs, Timers and interrupts.</p>
+<p>Since it didn&#96;t have a state control (states definitions found but not implemented), different types of IR process were putted in a single huge loop, making it not easy to read, maintain or test.</p>
+<p><img src="/logic.png"></p>
+<h3 id="Transmission"><a href="#Transmission" class="headerlink" title="Transmission"></a>Transmission</h3><p>When the cloud emits a ‘fire IR’ message to the hardware, it transmits if the stream is valid.</p>
+<h3 id="Receiving"><a href="#Receiving" class="headerlink" title="Receiving"></a>Receiving</h3><p>When an IR stream is captured, IR_Manager will check find the match protocol from initialised drivers.<br>Once the stream successfully is captured, filtering and normalisation will be applied before feeding into encoder to generate the commpressed notation, and send to the cloud.</p>
+<h2 id="The-Plan"><a href="#The-Plan" class="headerlink" title="The Plan"></a>The Plan</h2><p><img src="/unit_test.png"></p>
+<p>When I was studying this, a quiestion came to mind: How should an embedded engineer test all the edge cases among all these protocols?</p>
+<blockquote>
+<p>Ceedling is a nice build&#x2F;test system for C applications that makes it easier to create unit tests, especially those needing mocked interfaces. It does this by automatically generating mocks for the source modules you tell it to. This lets you test the interactions between your modules (and is especially useful when testing interactions with hardware).</p>
+</blockquote>
+<p>I found Ceedling, it uses GCC instead of the target compiler. We can use it to mock the interfaces so we don’t need to repeat the process of flash, run, and debug.</p>
+<p>In this scenario, expected peripherals need to be mocked would be: one timer for IR transmit and one timer for IR receive. However, Ceedling provide a improved experience for automatically generating the CMocks we need.</p>
+<h2 id="The-Result"><a href="#The-Result" class="headerlink" title="The Result"></a>The Result</h2><p>So, basically I finished IR rewriting by this pattern, let say for IR decoding:</p>
+<ol>
+<li>find out all the possible success&#x2F;failure paths in decoding an IR stream</li>
+<li>group and write test cases by their purpose</li>
+<li>rewrite it, debug it by only Ceedling rather than flashing the program to the hardwear</li>
+</ol>
+<h3 id="The-tricky-part-you-can’t-mock"><a href="#The-tricky-part-you-can’t-mock" class="headerlink" title="The tricky part you can’t mock"></a>The tricky part you can’t mock</h3><p>The IR transmiting carrier ticker and the IR receiving, they relies on their corresponding timer interrupt.</p>
+<p>So when the development is totally off-the-hardware, how would the hardware interrupt vectors work?</p>
+<p>Ceedling provides some form of mock functions to allow you manually control the ‘expected’, ‘unexpected’, ‘ignore’ and ‘return’ of functions.<br>Example of IR receive a pair of mark&#x2F;space data on stm32f1x mcu would be completed by below sequence:</p>
+<ol>
+<li>setup the read-out of input capture 1 equal to mark value</li>
+<li>setup the read-out of input capture 2 equal to (mark+space) value</li>
+<li>call the interrupt function manually</li>
+</ol>
+<p>test_IR.c  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// cond1 &amp; cond2 are the arbitrary generated start conditions</span></span><br><span class="line">TIM_GetITStatus_ExpectAndReturn(IR_RX_TIM, TIM_IT_CC1, RESET);</span><br><span class="line">TIM_GetITStatus_ExpectAndReturn(IR_RX_TIM, TIM_IT_CC2, !RESET);</span><br><span class="line">TIM_ClearITPendingBit_Expect(IR_RX_TIM, TIM_IT_CC2);</span><br><span class="line">TIM_GetCapture1_ExpectAndReturn(IR_RX_TIM, cond1);</span><br><span class="line">TIM_GetCapture2_ExpectAndReturn(IR_RX_TIM, cond1 + cond2);</span><br><span class="line">IR_RX_TIM_IRQHandler();</span><br></pre></td></tr></table></figure>
+
+<p>IR.c  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">IR_RX_TIM_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">        <span class="comment">/* Get the Input Capture value */</span></span><br><span class="line">        <span class="keyword">if</span> (TIM_GetITStatus(IR_RX_TIM, TIM_IT_CC1)) &#123;</span><br><span class="line">                TIM_ClearITPendingBit(IR_RX_TIM, TIM_IT_CC1);</span><br><span class="line">                capture_duty = TIM_GetCapture2(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;</span><br><span class="line">                capture_period = TIM_GetCapture1(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;</span><br><span class="line">                </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (TIM_GetITStatus(IR_RX_TIM, TIM_IT_CC2)) &#123;</span><br><span class="line">                TIM_ClearITPendingBit(IR_RX_TIM, TIM_IT_CC2);</span><br><span class="line">                capture_duty = TIM_GetCapture1(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;</span><br><span class="line">                capture_period = TIM_GetCapture2(IR_RX_TIM) &lt;&lt; IR_CLOCK_DIV;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (ir_state) &#123;</span><br><span class="line">        <span class="keyword">case</span> IR_STATE_RX:</span><br><span class="line">                carrier_ticker = carrier_rx_timeout_tick;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> IR_STATE_IDLE:</span><br><span class="line">                <span class="keyword">if</span> (capture_start &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                ... <span class="comment">// some start condition checks</span></span><br><span class="line">                capture_start = <span class="number">1</span>;</span><br><span class="line">                capture_stream_ptr = <span class="number">0</span>;</span><br><span class="line">                ir_state = IR_STATE_RX;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h2 id="Thoughts"><a href="#Thoughts" class="headerlink" title="Thoughts"></a>Thoughts</h2><p>TDD is a good way for software development. Ceedling is also a good tool even for embedded developer, it helps us to reduce the waste of development time. By abstracting the application layer, developer can purely focus on the program itself for the moment.</p>
+<h2 id="Abstraction"><a href="#Abstraction" class="headerlink" title="Abstraction"></a>Abstraction</h2><p>To abstract the application level is the ultimate goal. From experiences, the includes of header files increase from time to time as the application grow. The more connections between source files, the harder we can easily change or test them in module by module.</p>
+<p>Imagine a situation: <strong>Build a menu module with serial LCD driver:</strong></p>
+<p>Normally we would start from the bottom:<br>initialise serial interface peripherals -&gt; follow the datasheet -&gt; make reasonable prototypes for the future</p>
+<p>After we have the driver, we would continue building menu and animations. Sounds straight forward right?</p>
+<p>Picture it, at the end of the menu system, at the very top of menu.c we would have something like:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;global.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;interrupts.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;GPIO.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;menuGraphics.h&quot;</span>       <span class="comment">// animations</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;ILI9341_driver.h&quot;</span>     <span class="comment">// SPI driver</span></span></span><br></pre></td></tr></table></figure>
+<p>To make the application level abstracted, at some point, we might need to think: which calls which?<br>In this case, the menu should own the driver object, menu can initiliase the driver by passing the object in for example. Whenever the menu needs driver to execute or calculate, it calls the prototype, the prototype checks the if object exists.</p>
+<p>The driver is as simple as a container of the SPI chip’s <strong>logics</strong> that only use the flash memory. When the memory usages are bounded and keep as much as application level, developer can control memory usage easiler.</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">Home</a></li>
+         
+          <li><a href="/about/">About</a></li>
+         
+          <li><a href="/archives/">Writing</a></li>
+         
+          <li><a href="/projects_url">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#IR-Manager"><span class="toc-number">1.</span> <span class="toc-text">IR_Manager</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Transmission"><span class="toc-number">1.1.</span> <span class="toc-text">Transmission</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Receiving"><span class="toc-number">1.2.</span> <span class="toc-text">Receiving</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Plan"><span class="toc-number">2.</span> <span class="toc-text">The Plan</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#The-Result"><span class="toc-number">3.</span> <span class="toc-text">The Result</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-tricky-part-you-can%E2%80%99t-mock"><span class="toc-number">3.1.</span> <span class="toc-text">The tricky part you can’t mock</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thoughts"><span class="toc-number">4.</span> <span class="toc-text">Thoughts</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstraction"><span class="toc-number">5.</span> <span class="toc-text">Abstraction</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&text=Unit Tests &amp; Abstraction"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&is_video=false&description=Unit Tests &amp; Abstraction"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Unit Tests &amp; Abstraction&body=Check out this article: https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&title=Unit Tests &amp; Abstraction"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&name=Unit Tests &amp; Abstraction&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://jklmf.github.io/2020/04/08/unit-tests-and-abstraction/&t=Unit Tests &amp; Abstraction"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2022
+    Falcon LIU
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a href="/projects_url">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
