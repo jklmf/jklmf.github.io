@@ -13,13 +13,13 @@
 <meta property="og:site_name" content="Falcon LIU">
 <meta property="og:description" content="OverviewTo support growing number of platforms with different memory constrains and communication capabilities there is a need to define and implement platform independent and portable Remote Access I">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jklmf.github.io/intro.svg">
+<meta property="og:image" content="https://jklmf.github.io/intro.png">
 <meta property="article:published_time" content="2023-02-12T20:28:11.000Z">
-<meta property="article:modified_time" content="2022-03-10T15:52:36.650Z">
+<meta property="article:modified_time" content="2022-03-10T16:09:48.100Z">
 <meta property="article:author" content="Falcon LIU">
 <meta property="article:tag" content="embedded, hardware">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://jklmf.github.io/intro.svg">
+<meta name="twitter:image" content="https://jklmf.github.io/intro.png">
     
     
       
@@ -78,7 +78,7 @@
       <ul>
         
         
-        <li><a class="icon" aria-label="Next post" href="/2022/03/10/test/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Next post" href="/2020/04/08/unit-tests-and-abstraction/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" aria-label="Share post" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -145,7 +145,7 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><img src="/intro.svg"><br>To support growing number of platforms with different memory constrains and communication capabilities there is a need to define and implement platform independent and portable Remote Access Interface between BOS enabled hearable and Audio Gateway (AG).</p>
+    <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><p><img src="/intro.png"><br>To support growing number of platforms with different memory constrains and communication capabilities there is a need to define and implement platform independent and portable Remote Access Interface between BOS enabled hearable and Audio Gateway (AG).</p>
 <h3 id="New-interface-must"><a href="#New-interface-must" class="headerlink" title="New interface must"></a>New interface must</h3><ul>
 <li>(Mandatory) Provide Request&#x2F;Response semantics</li>
 <li>(Mandatory) Provide unsolicited Notification semantics</li>
@@ -174,6 +174,39 @@
 </ul>
 <h3 id="Accepted-limitations"><a href="#Accepted-limitations" class="headerlink" title="Accepted limitations"></a>Accepted limitations</h3><ul>
 <li>Covers Point-to-Point communication only</li>
+</ul>
+<p>#Proposal</p>
+<p>##RPC Protocol Semantics<br>Semantically BOS RPC will be based on JSON RPC semantics: JSON-RPC 2.0 Specification inheriting Request&#x2F;Response&#x2F;Notification messages paradigm and include the following elements:</p>
+<ul>
+<li>Service&#x2F;Message id for Method identification</li>
+<li>Request&#x2F;Response id for matching responses to multiple outstanding requests  </li>
+<li>Request&#x2F;Response&#x2F;Notification Parameters</li>
+<li>Result code will be always present in RPC Protocol message instead of being included in Error response as it is defined in JSON-RPC.</li>
+</ul>
+<p>##RPC Protocol Encoding</p>
+<p>###RPC Message Encoding<br>Messages as well as message payload can be encoded using Google Protobuf Protocol Buffers  |  Google Developers </p>
+<p>###RPC Protocol Encoding<br>RPC protocol will be using proprietary binary encoding of RPC message. Exact definition of the protocol is still to be worked out (STEP 2 objective). As interim solution platform specific provisioning can be utilized (like WuQi CLI). Alternative is to use Google Protobuf as well to encode common part of RPC message.</p>
+<p>###RPC Protocol Stack<br>BOS RPC consists from tree layers:</p>
+<ul>
+<li>RPC Service Layer</li>
+<li>RPC Protocol Layer</li>
+<li>Platform Transport Layer</li>
+</ul>
+<p>###RPC Service Layer<br>Abstract layer responsible for</p>
+<ul>
+<li>RPC Message payload decoding encoding</li>
+<li>RPC Message handling (Request, Response, Notification)</li>
+<li>RPC Protocol Layer<br>Abstract layer responsible for</li>
+<li>RPC message transporting over given transport layer</li>
+<li>RPC frame data integrity checking and error handling</li>
+<li>multiple request&#x2F;response sequencing </li>
+<li>Request dispatching to registered services</li>
+</ul>
+<p>###Platform Transport Layer<br>Platform specific layer responsible for</p>
+<ul>
+<li>Interface media abstraction (whether it is BT Classic, BLE, UART, etc)</li>
+<li>RPC Protocol message delivery over unreliable datagram transport</li>
+<li>Message segmentation to resolve platform transport constrains (if any)</li>
 </ul>
 
   </div>
