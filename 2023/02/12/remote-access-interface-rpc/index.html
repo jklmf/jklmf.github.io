@@ -15,7 +15,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://jklmf.github.io/intro.png">
 <meta property="article:published_time" content="2023-02-12T20:28:11.000Z">
-<meta property="article:modified_time" content="2022-03-10T16:09:48.100Z">
+<meta property="article:modified_time" content="2022-03-11T10:15:11.940Z">
 <meta property="article:author" content="Falcon LIU">
 <meta property="article:tag" content="embedded, hardware">
 <meta name="twitter:card" content="summary">
@@ -106,7 +106,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#New-interface-must"><span class="toc-number">1.1.</span> <span class="toc-text">New interface must</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Minimal-transport-protocol-requirements"><span class="toc-number">1.2.</span> <span class="toc-text">Minimal transport protocol requirements</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interfaces"><span class="toc-number">1.3.</span> <span class="toc-text">Interfaces</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Accepted-limitations"><span class="toc-number">1.4.</span> <span class="toc-text">Accepted limitations</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#New-interface-must"><span class="toc-number">1.1.</span> <span class="toc-text">New interface must</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Minimal-transport-protocol-requirements"><span class="toc-number">1.2.</span> <span class="toc-text">Minimal transport protocol requirements</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interfaces"><span class="toc-number">1.3.</span> <span class="toc-text">Interfaces</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Accepted-limitations"><span class="toc-number">1.4.</span> <span class="toc-text">Accepted limitations</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Proposal"><span class="toc-number"></span> <span class="toc-text">Proposal</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC-Protocol-Semantics"><span class="toc-number">1.</span> <span class="toc-text">RPC Protocol Semantics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC-Protocol-Encoding"><span class="toc-number">2.</span> <span class="toc-text">RPC Protocol Encoding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Message-Encoding"><span class="toc-number">2.1.</span> <span class="toc-text">RPC Message Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Protocol-Encoding-1"><span class="toc-number">2.2.</span> <span class="toc-text">RPC Protocol Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Protocol-Stack"><span class="toc-number">2.3.</span> <span class="toc-text">RPC Protocol Stack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Service-Layer"><span class="toc-number">2.4.</span> <span class="toc-text">RPC Service Layer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Platform-Transport-Layer"><span class="toc-number">2.5.</span> <span class="toc-text">Platform Transport Layer</span></a></li></ol></li></ol>
     </div>
   </span>
 </div>
@@ -175,24 +175,22 @@
 <h3 id="Accepted-limitations"><a href="#Accepted-limitations" class="headerlink" title="Accepted limitations"></a>Accepted limitations</h3><ul>
 <li>Covers Point-to-Point communication only</li>
 </ul>
-<p>#Proposal</p>
-<p>##RPC Protocol Semantics<br>Semantically BOS RPC will be based on JSON RPC semantics: JSON-RPC 2.0 Specification inheriting Request&#x2F;Response&#x2F;Notification messages paradigm and include the following elements:</p>
+<h1 id="Proposal"><a href="#Proposal" class="headerlink" title="Proposal"></a>Proposal</h1><h2 id="RPC-Protocol-Semantics"><a href="#RPC-Protocol-Semantics" class="headerlink" title="RPC Protocol Semantics"></a>RPC Protocol Semantics</h2><p>Semantically BOS RPC will be based on JSON RPC semantics: JSON-RPC 2.0 Specification inheriting Request&#x2F;Response&#x2F;Notification messages paradigm and include the following elements:</p>
 <ul>
 <li>Service&#x2F;Message id for Method identification</li>
 <li>Request&#x2F;Response id for matching responses to multiple outstanding requests  </li>
 <li>Request&#x2F;Response&#x2F;Notification Parameters</li>
 <li>Result code will be always present in RPC Protocol message instead of being included in Error response as it is defined in JSON-RPC.</li>
 </ul>
-<p>##RPC Protocol Encoding</p>
-<p>###RPC Message Encoding<br>Messages as well as message payload can be encoded using Google Protobuf Protocol Buffers  |  Google Developers </p>
-<p>###RPC Protocol Encoding<br>RPC protocol will be using proprietary binary encoding of RPC message. Exact definition of the protocol is still to be worked out (STEP 2 objective). As interim solution platform specific provisioning can be utilized (like WuQi CLI). Alternative is to use Google Protobuf as well to encode common part of RPC message.</p>
-<p>###RPC Protocol Stack<br>BOS RPC consists from tree layers:</p>
+<h2 id="RPC-Protocol-Encoding"><a href="#RPC-Protocol-Encoding" class="headerlink" title="RPC Protocol Encoding"></a>RPC Protocol Encoding</h2><h3 id="RPC-Message-Encoding"><a href="#RPC-Message-Encoding" class="headerlink" title="RPC Message Encoding"></a>RPC Message Encoding</h3><p>Messages as well as message payload can be encoded using Google Protobuf Protocol Buffers  |  Google Developers </p>
+<h3 id="RPC-Protocol-Encoding-1"><a href="#RPC-Protocol-Encoding-1" class="headerlink" title="RPC Protocol Encoding"></a>RPC Protocol Encoding</h3><p>RPC protocol will be using proprietary binary encoding of RPC message. Exact definition of the protocol is still to be worked out (STEP 2 objective). As interim solution platform specific provisioning can be utilized (like WuQi CLI). Alternative is to use Google Protobuf as well to encode common part of RPC message.</p>
+<h3 id="RPC-Protocol-Stack"><a href="#RPC-Protocol-Stack" class="headerlink" title="RPC Protocol Stack"></a>RPC Protocol Stack</h3><p>BOS RPC consists from tree layers:</p>
 <ul>
 <li>RPC Service Layer</li>
 <li>RPC Protocol Layer</li>
 <li>Platform Transport Layer</li>
 </ul>
-<p>###RPC Service Layer<br>Abstract layer responsible for</p>
+<h3 id="RPC-Service-Layer"><a href="#RPC-Service-Layer" class="headerlink" title="RPC Service Layer"></a>RPC Service Layer</h3><p>Abstract layer responsible for</p>
 <ul>
 <li>RPC Message payload decoding encoding</li>
 <li>RPC Message handling (Request, Response, Notification)</li>
@@ -202,7 +200,7 @@
 <li>multiple request&#x2F;response sequencing </li>
 <li>Request dispatching to registered services</li>
 </ul>
-<p>###Platform Transport Layer<br>Platform specific layer responsible for</p>
+<h3 id="Platform-Transport-Layer"><a href="#Platform-Transport-Layer" class="headerlink" title="Platform Transport Layer"></a>Platform Transport Layer</h3><p>Platform specific layer responsible for</p>
 <ul>
 <li>Interface media abstraction (whether it is BT Classic, BLE, UART, etc)</li>
 <li>RPC Protocol message delivery over unreliable datagram transport</li>
@@ -233,7 +231,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#New-interface-must"><span class="toc-number">1.1.</span> <span class="toc-text">New interface must</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Minimal-transport-protocol-requirements"><span class="toc-number">1.2.</span> <span class="toc-text">Minimal transport protocol requirements</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interfaces"><span class="toc-number">1.3.</span> <span class="toc-text">Interfaces</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Accepted-limitations"><span class="toc-number">1.4.</span> <span class="toc-text">Accepted limitations</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#New-interface-must"><span class="toc-number">1.1.</span> <span class="toc-text">New interface must</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Minimal-transport-protocol-requirements"><span class="toc-number">1.2.</span> <span class="toc-text">Minimal transport protocol requirements</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interfaces"><span class="toc-number">1.3.</span> <span class="toc-text">Interfaces</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Accepted-limitations"><span class="toc-number">1.4.</span> <span class="toc-text">Accepted limitations</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Proposal"><span class="toc-number"></span> <span class="toc-text">Proposal</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC-Protocol-Semantics"><span class="toc-number">1.</span> <span class="toc-text">RPC Protocol Semantics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RPC-Protocol-Encoding"><span class="toc-number">2.</span> <span class="toc-text">RPC Protocol Encoding</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Message-Encoding"><span class="toc-number">2.1.</span> <span class="toc-text">RPC Message Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Protocol-Encoding-1"><span class="toc-number">2.2.</span> <span class="toc-text">RPC Protocol Encoding</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Protocol-Stack"><span class="toc-number">2.3.</span> <span class="toc-text">RPC Protocol Stack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RPC-Service-Layer"><span class="toc-number">2.4.</span> <span class="toc-text">RPC Service Layer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Platform-Transport-Layer"><span class="toc-number">2.5.</span> <span class="toc-text">Platform Transport Layer</span></a></li></ol></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
