@@ -13,28 +13,28 @@
 <meta property="og:site_name" content="Falcon LIU">
 <meta property="og:description" content="In my second job as a ‘software engineer’, my job was, mainly maintain and update existing firmwares.I came across with a coffee machine that needs to be selling globally, rather than only some counti">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jklmf.github.io/zero-crossing.png">
+<meta property="og:image" content="https://jklmf.github.io/2014/05/17/50Hz-60Hz/zero-crossing.png">
 <meta property="article:published_time" content="2014-05-17T12:28:11.000Z">
-<meta property="article:modified_time" content="2022-03-11T15:29:08.070Z">
+<meta property="article:modified_time" content="2022-03-11T15:36:25.700Z">
 <meta property="article:author" content="Falcon LIU">
 <meta property="article:tag" content="embedded, hardware">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://jklmf.github.io/zero-crossing.png">
+<meta name="twitter:image" content="https://jklmf.github.io/2014/05/17/50Hz-60Hz/zero-crossing.png">
     
     
       
         
-          <link rel="shortcut icon" href="/images/favicon.ico">
+          <link rel="shortcut icon" href="../../../../images/favicon.ico">
         
       
       
         
-          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          <link rel="icon" type="image/png" href="../../../../images/favicon-192x192.png" sizes="192x192">
         
       
       
         
-          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          <link rel="apple-touch-icon" sizes="180x180" href="../../../../images/apple-touch-icon.png">
         
       
     
@@ -42,7 +42,7 @@
     <title>50Hz or 60Hz?</title>
     <!-- styles -->
     
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="../css/style.css">
 
     <!-- persian styles -->
     
@@ -63,13 +63,13 @@
     <span id="nav">
       <ul>
         <!--
-       --><li><a href="/">Home</a></li><!--
+       --><li><a href="../../../../index.html">Home</a></li><!--
      --><!--
-       --><li><a href="/about/">About</a></li><!--
+       --><li><a href="../../../../about/">About</a></li><!--
      --><!--
-       --><li><a href="/archives/">Writing</a></li><!--
+       --><li><a href="../../../../archives/">Writing</a></li><!--
      --><!--
-       --><li><a href="/projects_url">Projects</a></li><!--
+       --><li><a href="../../../../projects_url">Projects</a></li><!--
      -->
       </ul>
     </span>
@@ -77,7 +77,7 @@
     <span id="actions">
       <ul>
         
-        <li><a class="icon" aria-label="Previous post" href="/2019/11/17/test-jig/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Previous post" href="../../../../2019/11/17/test-jig/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
@@ -146,7 +146,7 @@
 
   <div class="content" itemprop="articleBody">
     <p>In my second job as a ‘software engineer’, my job was, mainly maintain and update existing firmwares.<br>I came across with a coffee machine that needs to be selling globally, rather than only some counties. My task was to update the part of the circuit and firmware that detects the AC main switching frequency.</p>
-<p><img src="/zero-crossing.png"></p>
+<p><img src="./zero-crossing.png"></p>
 <h2 id="Hardware"><a href="#Hardware" class="headerlink" title="Hardware"></a>Hardware</h2><p>A zero-crossing Triac and an optocoupler were chosen for detecting. The MCU input pin is protected from high voltage by the optocoupler. Whenever the AC signal crossing the zero, a small signal is output from the triac. A transistor will then amplify the pulses before feed in to the external interrupt pin of MCU.</p>
 <h2 id="Software"><a href="#Software" class="headerlink" title="Software"></a>Software</h2><p>Whenever the machine boot, the timer for input capture will be initialised first. Then it counts the external pulses from the pin.</p>
 <p>After a window of sampling time, 50Hz or 60Hz will be determinded by the average of captured period (i.e. 1&#x2F;f) of the frequency. Once the AC main frequency is known, the software then utilize it to help on some non-time-critical tasks such as button press or brightness control.</p>
@@ -165,13 +165,13 @@
     <div id="nav-footer" style="display: none">
       <ul>
          
-          <li><a href="/">Home</a></li>
+          <li><a href="../../../../index.html">Home</a></li>
          
-          <li><a href="/about/">About</a></li>
+          <li><a href="../../../../about/">About</a></li>
          
-          <li><a href="/archives/">Writing</a></li>
+          <li><a href="../../../../archives/">Writing</a></li>
          
-          <li><a href="/projects_url">Projects</a></li>
+          <li><a href="../../../../projects_url">Projects</a></li>
         
       </ul>
     </div>
@@ -220,13 +220,13 @@
     <nav>
       <ul>
         <!--
-       --><li><a href="/">Home</a></li><!--
+       --><li><a href="../../../../index.html">Home</a></li><!--
      --><!--
-       --><li><a href="/about/">About</a></li><!--
+       --><li><a href="../../../../about/">About</a></li><!--
      --><!--
-       --><li><a href="/archives/">Writing</a></li><!--
+       --><li><a href="../../../../archives/">Writing</a></li><!--
      --><!--
-       --><li><a href="/projects_url">Projects</a></li><!--
+       --><li><a href="../../../../projects_url">Projects</a></li><!--
      -->
       </ul>
     </nav>
@@ -274,7 +274,7 @@
   </script>
 
 
-<script src="/js/main.js"></script>
+<script src="../js/main.js"></script>
 
 <!-- search -->
 
